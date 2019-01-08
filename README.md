@@ -12,8 +12,10 @@ pak svou vlastní větev.
 Většina stavových souborů není verzována, jediný polo-stavový soubor
 je soubor `data/konfigurace.ini`, který obsahuje směsici konfiguračních
 a stavových dat. Při prvním použití layoutu je doporučeno použít referenční
-soubor z příslušné větve a pak gitu nařídit ignorovat změny v tomto souboru:
+soubor z příslušné větve:
 
 ```
-$ git update-index --skip-worktree data/konfigurace.ini
+$ mv data/konfigurace.sample.ini data/konfigurace.ini
 ```
+
+hJOP nadále pracuje se souborem `data/konfigurace.ini`, který je gitignorován.
