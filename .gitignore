@@ -1,9 +1,7 @@
 data/konfigurace.ini
 stav
 !stav/.gitkeep
-lib-rcs
 log
-hJOPserver.exe
+*.exe
 *.dll
 trakce-xn.ini
-
