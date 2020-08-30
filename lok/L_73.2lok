@@ -8,6 +8,7 @@ oznaceni=T478
 poznamka=
 trida=1
 max_rychlost=120
+prechodnost=0
 pom_take=
 pom_release=
 func_vyznam=;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
