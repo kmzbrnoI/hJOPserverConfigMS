@@ -47,6 +47,8 @@ class JCAC(AC):
 
     def on_start(self) -> None:
         logging.info('Start')
+        # Clear blocks state cache because blocks could have changed during "DONE" state
+        utils.blocks.blocks_state = {}
         self.jcs_remaining = jcs(self.to_process)
         self.statestr = ''
 
@@ -97,7 +99,8 @@ class JCAC(AC):
             self.statestr_send()
 
     def on_block_change(self, block: ac.Block) -> None:
-        self.process_free_jcs()
+        if self.state == ac.State.RUNNING:
+            self.process_free_jcs()
 
 
 def jcs(ids: List[int]) -> Dict[int, JC]:
