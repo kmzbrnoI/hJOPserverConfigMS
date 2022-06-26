@@ -1,0 +1,16 @@
+﻿[global]
+version=2.0
+
+[95]
+nazev=čmelák
+majitel=MS
+oznaceni=770.095-8 MS
+poznamka=
+trida=1
+max_rychlost=45
+prechodnost=0
+pom_take=
+pom_release=
+func_vyznam={světla koncová};{zvuk};{houkačka dlouhá};{povolte brzdy úplně};{houkačka krátká};{volnoběh};{plný výkon};{světla přední};{světla zadní};{světlo v kabině};;;;;;;;;;;{broušení okolků};;;;;;;;{ztlumení zvuků};
+func_type=PPMMMPPPPPPPPPPPPPPPPPPPPPPPP
+

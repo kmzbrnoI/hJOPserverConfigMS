@@ -1,0 +1,16 @@
+﻿[global]
+version=2.0
+
+[12]
+nazev=pomeranč
+majitel=MS
+oznaceni=775.012-8 MX
+poznamka=
+trida=1
+max_rychlost=45
+prechodnost=0
+pom_take=
+pom_release=
+func_vyznam={světla přední};{světla koncová};{dálkový světlomet};{posun};{stanoviště  };{boční tabulky};{volnoběh};;{zvuk};;;;{povolte brzdy úplně};{houkačka krátká};{houkačka dlouhá};;;;;;{broušení okolků};;;;;;;;{ztlumení zvuků};
+func_type=PPPPPPPPPPPPMMMPPPPPPPPPPPPPP
+

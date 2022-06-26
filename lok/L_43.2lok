@@ -4,13 +4,13 @@ version=2.0
 [43]
 nazev=Sergej
 majitel=MS
-oznaceni=781 143
+oznaceni=781.143-3 MX
 poznamka=
 trida=1
-max_rychlost=100
+max_rychlost=45
 prechodnost=0
 pom_take=
 pom_release=
-func_vyznam={světla koncová};{zvuk};{houkačka dlouhá};;{houkačka krátká};;;{světla přední};{světla zadní};;;;;;;;;;;;;;;;;;;;;
-func_type=PPMPMPPPPPPPPPPPPPPPPPPPPPPPP
+func_vyznam={světla koncová};{zvuk};{houkačka dlouhá};;{píšťala 2};{volnoběh};{plný výkon};{světla přední};{světla zadní};{houkačka krátká};;;;;;;;;;;{broušení okolků};;;;;;;;{ztlumení zvuků};
+func_type=PPMPMPPPPMPPPPPPPPPPPPPPPPPPP
 

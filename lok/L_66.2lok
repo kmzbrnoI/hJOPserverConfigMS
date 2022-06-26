@@ -1,16 +1,16 @@
 ﻿[global]
 version=2.0
 
-[32]
-nazev=brejlovec
+[66]
+nazev=sergej
 majitel=MS
-oznaceni=750.032-5 MX
+oznaceni=781.366-0 MS
 poznamka=
 trida=1
-max_rychlost=100
+max_rychlost=45
 prechodnost=0
 pom_take=
 pom_release=
 func_vyznam={světla koncová};{zvuk};{houkačka dlouhá};{povolte brzdy úplně};{píšťala 2};{volnoběh};{plný výkon};{světla přední};{světla zadní};{houkačka krátká};;;;;;;;;;;{broušení okolků};;;;;;;;{ztlumení zvuků};
-func_type=PPMMMPPPPMPPPPPPPPPPPPPPPPPPP
+func_type=PPMMMPPPPMPPMPPPPPPPPPPPPPPPP
 
