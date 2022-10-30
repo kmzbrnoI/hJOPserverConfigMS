@@ -1,0 +1,16 @@
+﻿[global]
+version=2.0
+
+[82]
+nazev=rosnička
+majitel=MS
+oznaceni=710.682-X MS
+poznamka=
+trida=2
+max_rychlost=45
+prechodnost=0
+pom_take=
+pom_release=
+func_vyznam=;{zvuk};{houkačka dlouhá};{povolte brzdy úplně};;{volnoběh};{plný výkon};{světla přední};{světla zadní};;;{houkačka krátká};;;;;{píšťalka výpravčího};;;;{broušení okolků};;;;;;;;{ztlumení zvuků};
+func_type=PPMMPPPPPPPMPPPPMPPPPPPPPPPPP
+

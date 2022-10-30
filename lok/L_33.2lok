@@ -1,0 +1,16 @@
+﻿[global]
+version=2.0
+
+[33]
+nazev=Brejlovec
+majitel=MS
+oznaceni=754 033-9 MX
+poznamka=
+trida=1
+max_rychlost=70
+prechodnost=0
+pom_take=
+pom_release=
+func_vyznam={světla koncová};{zvuk};{houkačka dlouhá};{povolte brzdy úplně};;;;{světla přední};{světla zadní};;;;;;;;;;;;{broušení okolků};;;;;;;;{ztlumení zvuků};
+func_type=PPMMMPPPPPPPPPPPPPPPPPPPPPPPP
+

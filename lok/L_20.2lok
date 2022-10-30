@@ -1,0 +1,16 @@
+﻿[global]
+version=2.0
+
+[20]
+nazev=sergej
+majitel=MS
+oznaceni=781.220-X MX
+poznamka=
+trida=1
+max_rychlost=45
+prechodnost=0
+pom_take=
+pom_release=
+func_vyznam={světla koncová};{zvuk};;;;{volnoběh};{plný výkon};{světla přední};{světla zadní};;;;;;;;;;;;{broušení okolků};;;;;;;;;
+func_type=PPMMMPPPPMPPPPPPPPPPPPPPPPPPP
+

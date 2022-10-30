@@ -1,13 +1,13 @@
 ﻿[global]
 version=2.0
 
-[54]
-nazev=brejlovec
+[30]
+nazev=bardotka
 majitel=MS
-oznaceni=753.254-2 MS
+oznaceni=752.030-X MS
 poznamka=
 trida=1
-max_rychlost=70
+max_rychlost=45
 prechodnost=0
 pom_take=
 pom_release=

@@ -3,14 +3,14 @@ version=2.0
 
 [36]
 nazev=Brejlovec
-majitel=Milan Sáblík
-oznaceni=754 036
+majitel=MS
+oznaceni=754 036-X MX
 poznamka=
 trida=1
-max_rychlost=100
+max_rychlost=70
 prechodnost=0
 pom_take=
 pom_release=
-func_vyznam={světla zadní};{zvuk};{houkačka dlouhá};{povolte brzdy úplně};{píšťala dlouhá};;;{světla st. 1};{světla st. 2};;;;;;;;;;;;;;;;;;;;;
+func_vyznam={světla koncová};{zvuk};;{povolte brzdy úplně};;;;{světla přední};{světla zadní};;;;;;;;;;;;{broušení okolků};;;;;;;;{ztlumení zvuků};
 func_type=PPMMMPPPPPPPPPPPPPPPPPPPPPPPP
 

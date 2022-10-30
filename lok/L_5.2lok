@@ -1,0 +1,16 @@
+﻿[global]
+version=2.0
+
+[5]
+nazev=hydraulika
+majitel=MS
+oznaceni=716.505-3 MX
+poznamka=
+trida=1
+max_rychlost=45
+prechodnost=0
+pom_take=
+pom_release=
+func_vyznam={světla koncová};{zvuk};{houkačka dlouhá};{povolte brzdy úplně};;{volnoběh};{plný výkon};{světla přední};{světla zadní};;;;;{píšťala dlouhá};{houkačka krátká};;{píšťalka výpravčího};;{rozvěšení šroubovky};;{broušení okolků};;;;;;;;;
+func_type=PPMMMPPPPMPPPMMPMPMPPPPPPPPPP
+

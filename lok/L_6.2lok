@@ -1,0 +1,16 @@
+﻿[global]
+version=2.0
+
+[6]
+nazev=kocour
+majitel=MS
+oznaceni=740.606-X MX
+poznamka=
+trida=1
+max_rychlost=45
+prechodnost=0
+pom_take=
+pom_release=
+func_vyznam={světla koncová};{zvuk};{houkačka střední};{povolte brzdy úplně};;;;{světla přední};{světla zadní};;{houkačka dlouhá};{houkačka krátká};;{píšťala 2};{píšťala 2 krátká};;{píšťalka výpravčího};;{rozvěšení šroubovky};;{broušení okolků};;;;;;;;{ztlumení zvuků};
+func_type=PPMMMPPPPPMMPMMPMPMPPPPPPPPPP
+

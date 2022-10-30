@@ -1,0 +1,16 @@
+﻿[global]
+version=2.0
+
+[59]
+nazev=šukafon
+majitel=PM
+oznaceni=810.059-X
+poznamka=
+trida=2
+max_rychlost=70
+prechodnost=0
+pom_take=
+pom_release=
+func_vyznam=;{zvuk};{houkačka dlouhá};{houkačka krátká};;;;{broušení okolků};;;;;;;{ztlumení zvuků};;;;{volnoběh};;;;;;;;;;;
+func_type=PPMMPPPPPPPPPPPPPPPPPPPPPPPPP
+

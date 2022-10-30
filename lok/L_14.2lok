@@ -1,0 +1,16 @@
+﻿[global]
+version=2.0
+
+[14]
+nazev=hektor
+majitel=MS
+oznaceni=721.114-7 MS
+poznamka=
+trida=1
+max_rychlost=45
+prechodnost=0
+pom_take=
+pom_release=
+func_vyznam={světla koncová};{zvuk};{houkačka dlouhá};{povolte brzdy úplně};;{volnoběh};{plný výkon};{světla přední};{světla zadní};{světlo v kabině};;;;{houkačka krátká};;;;;;;{broušení okolků};;;;;;;;{ztlumení zvuků};
+func_type=PPMMPPPPPPPPPMPPPPPPPPPPPPPPP
+

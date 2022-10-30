@@ -7,10 +7,10 @@ majitel=MS
 oznaceni=750.032-5 MX
 poznamka=
 trida=1
-max_rychlost=100
+max_rychlost=70
 prechodnost=0
 pom_take=
 pom_release=
-func_vyznam={světla koncová};{zvuk};{houkačka dlouhá};{povolte brzdy úplně};{píšťala 2};{volnoběh};{plný výkon};{světla přední};{světla zadní};{houkačka krátká};;;;;;;;;;;{broušení okolků};;;;;;;;{ztlumení zvuků};
+func_vyznam={světla koncová};{zvuk};{houkačka dlouhá};{povolte brzdy úplně};;{volnoběh};{plný výkon};{světla přední};{světla zadní};{houkačka krátká};;;;;;;;;;;{broušení okolků};;;;;;;;{ztlumení zvuků};
 func_type=PPMMMPPPPMPPPPPPPPPPPPPPPPPPP
 
