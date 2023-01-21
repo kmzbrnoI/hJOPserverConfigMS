@@ -7,10 +7,10 @@ majitel=MS
 oznaceni=753.254-2 MS
 poznamka=
 trida=1
-max_rychlost=70
+max_rychlost=45
 prechodnost=0
 pom_take=
 pom_release=
-func_vyznam={světla koncová};{zvuk};{houkačka dlouhá};{povolte brzdy úplně};{houkačka krátká};{volnoběh};{plný výkon};{světla přední};{světla zadní};;;;;;{houkačka krátká};;;;;;{broušení okolků};;;;;;;;{ztlumení zvuků};
-func_type=PPMMMPPPPPPPPPMPPPPPPPPPPPPPP
+func_vyznam={světla koncová};{zvuk};;;;{volnoběh};{plný výkon};{světla přední};{světla zadní};;;{houkačka dlouhá};{povolte brzdy úplně};{píšťala dlouhá};{píšťala krátká};;;;;;{broušení okolků};;;;;;;;{ztlumení zvuků};
+func_type=PPMMMPPPPPMMMMMPPPPPPPPPPPPPP
 
