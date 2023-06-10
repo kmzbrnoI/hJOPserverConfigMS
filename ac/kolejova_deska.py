@@ -28,19 +28,40 @@ from ac import pt as pt
 import utils.blocks
 
 JC = Dict[str, Any]
+
+
+class SC: # SignalCode
+    STUJ = 0
+    VOLNO = 1
+    VYSTRAHA = 2
+    OCEK40 = 3
+    VOLNO40 = 4
+    VSE = 5
+    VYSTRAHA40 = 6
+    OCEK4040 = 7
+    PRIVOL = 8
+    POSUN_ZAJ = 9
+    POSUN_NEZAJ = 10
+    OPAK_VOLNO = 11
+    OPAK_VYSTRAHA = 12
+    ZHASNUTO = 13
+    OPAK_OCEK40 = 14
+    OPAK_VYSTRAHA_40 = 15
+    OPAK_40OCEK40 = 16
+
+
 base = 501
-b_nav = {131:501,130:509,136:535,137:541,138:547,132:517,133:523,134:529} # seznam navestidel a maket na kolejove desce
-b_predv = {131:571,130:569}
-nav_vjezd = [130,131] 
-dn = [1,2,3,4,6,7] # navesti pro vlak dovolujici jizdu - maketa zelena
+b_nav = {131:501, 130:509, 136:535, 137:541, 138:547, 132:517, 133:523, 134:529} # seznam navestidel a maket na kolejove desce
+b_predv = {131:571, 130:569}
+NAV_VJEZD = [130, 131]
+DN = [SC.VOLNO, SC.VYSTRAHA, SC.OCEK40, SC.VOLNO40, SC.VYSTRAHA40, SC.OCEK4040] # navesti pro vlak dovolujici jizdu - maketa zelena
 
 cesty_SK = {120:553,121:555,122:557,123:559}
 cesty_LK = {110:561,111:563,112:565,113:567}
 
-class JCAC(AC):
+class KDAC(AC):
     """
-    This AC is supposed to process entered JCs as soon as all their tracks
-    are free.
+    Komunikace s kolejovou deskou
     """
 
     def __init__(self, id_: str, password: str) -> None:
@@ -67,26 +88,17 @@ class JCAC(AC):
             self.show_nav(id, aspect)
         for cesta_id in cesty_LK.keys():
             id1 = cesty_LK[cesta_id]
-            id2 = id1 + 1
-            sta1 = True # off
-            sta2 = False
-            result = self.pt_put(f'/blockState/{id1}', {'blockState': {'enabled': True, 'activeOutput': sta1, 'activeInput': False}})
-            result = self.pt_put(f'/blockState/{id2}', {'blockState': {'enabled': True, 'activeOutput': sta2, 'activeInput': False}})
+            result = self.pt_put(f'/blockState/{id1}', {'blockState': {'enabled': True, 'activeOutput': False, 'activeInput': False}})
         for cesta_id in cesty_SK.keys():
             id1 = cesty_SK[cesta_id]
-            id2 = id1 + 1
-            sta1 = True # off
-            sta2 = False
-            result = self.pt_put(f'/blockState/{id1}', {'blockState': {'enabled': True, 'activeOutput': sta1, 'activeInput': False}})
-            result = self.pt_put(f'/blockState/{id2}', {'blockState': {'enabled': True, 'activeOutput': sta2, 'activeInput': False}})
+            result = self.pt_put(f'/blockState/{id1}', {'blockState': {'enabled': True, 'activeOutput': False, 'activeInput': False}})
 
-            
         #self.done() # ukonceni skryptu - zde nepotrebujeme
         logging.info(f'End of start seq.')
 
     def on_stop(self) -> None:
         if id in b_nav:
-            self.show_nav(id,13) # zhasnout makety
+            self.show_nav(id, 13) # zhasnout makety
 
     def on_resume(self) -> None:
         self.set_color(0xFFFF00)
@@ -95,123 +107,72 @@ class JCAC(AC):
     def on_block_change(self, block: ac.Block) -> None:
         if self.state == ac.State.RUNNING:
             #52 #su_U
-            #logging.info(f'changed {block["name"]}...{block}')
+            logging.debug(f'changed {block["name"]}...{block}')
             id = block['id']
             if id in b_nav:
-                #aspect = ac.pt.get(f'/blockState/{id}')['blockState']['signal'] # get aspect from changed nav
                 aspect = block['blockState']['signal']
-                #logging.info(f'nav {block["name"]} aspect = {aspect}')
+                logging.debug(f'nav {block["name"]} aspect = {aspect}')
                 self.show_nav(id, aspect)
-            if id==105: # usek LK
+            if id == 105: # usek LK
                 newstate = block['blockState']['state'] == "occupied"
                 if (newstate != self.uLK): # test na zmenu obsazeni
                     self.uLK = newstate
                     for cesta_id in cesty_LK.keys():
                         cesta_stav = self.pt_get(f'/jc/{cesta_id}/?state=True')['jc']['state']['active']
                         id1 = cesty_LK[cesta_id]
-                        id2 = id1 + 1
-                        if cesta_stav and newstate:
-                            print('LK obsaz v ceste '+str(cesta_id))
-                            sta1 = False # on
-                            sta2 = True
-                        else:
-                            print('neni cesta '+str(cesta_id))
-                            sta1 = True # off
-                            sta2 = False
-                        result = self.pt_put(f'/blockState/{id1}', {'blockState': {'enabled': True, 'activeOutput': sta1, 'activeInput': False}})
-                        result = self.pt_put(f'/blockState/{id2}', {'blockState': {'enabled': True, 'activeOutput': sta2, 'activeInput': False}})
-            if id==111: # usek SK
+                        result = self.pt_put(f'/blockState/{id1}', {'blockState': {'enabled': True, 'activeOutput': cesta_stav and newstate, 'activeInput': False}})
+            if id == 111: # usek SK
                 newstate = block['blockState']['state'] == "occupied"
                 if (newstate != self.uSK): # test na zmenu obsazeni
                     self.uSK = newstate
                     for cesta_id in cesty_SK.keys():
                         cesta_stav = self.pt_get(f'/jc/{cesta_id}/?state=True')['jc']['state']['active']
                         id1 = cesty_SK[cesta_id]
-                        id2 = id1 + 1
-                        if cesta_stav and newstate:
-                            print('SK obsaz v ceste '+str(cesta_id))
-                            sta1 = False # on
-                            sta2 = True
-                        else:
-                            print('neni cesta '+str(cesta_id))
-                            sta1 = True # off
-                            sta2 = False
-                        result = self.pt_put(f'/blockState/{id1}', {'blockState': {'enabled': True, 'activeOutput': sta1, 'activeInput': False}})
-                        result = self.pt_put(f'/blockState/{id2}', {'blockState': {'enabled': True, 'activeOutput': sta2, 'activeInput': False}})
-            if id==600: # tl PrS
-                logging.info('PrS')
-                n = self.pt_get(f'/blockState/130/?state=True')
-                logging.info(n)
-                if block['blockState']['activeInput']:
-                    logging.info('PrS zap')
-                    result = self.pt_put(f'/blockState/130', {'blockState': {'signal': 8}})
-                else:
-                    logging.info('PrS vyp')
-                    result = self.pt_put(f'/blockState/130', {'blockState': {'signal': 0}})
-                
-                
+                        result = self.pt_put(f'/blockState/{id1}', {'blockState': {'enabled': True, 'activeOutput': cesta_stav and newstate, 'activeInput': False}})
+            if id == 600: # tl PrS
+                logging.debug('PrS')
+                # self.pt_put(f'/blockState/130', {'blockState': {'signal': 8 if block['blockState']['activeInput'] else 0}})
 
-    def show_nav(self, id: int, state: int) -> None:
-        if state<0:
+    def show_nav(self, id: int, aspect: int) -> None:
+        if aspect < 0:
             return
-        if (id in nav_vjezd) : # L / S
+        if id in NAV_VJEZD : # L / S
             pr_out = 0
-            if (state in dn): # jizda vlaku
+            if aspect in DN: # jizda vlaku
                 aspect_out = [1,0,0,0] # zelena bila cervena kmit
                 pr_out = 1
-            elif (state == 9): # posun dovolen
+            elif aspect == SC.POSUN_ZAJ or aspect == SC.POSUN_NEZAJ:
                 aspect_out = [0,1,0,0] # zelena bila cervena kmit
-            elif (state == 8): # PN
+            elif aspect == SC.PRIVOL:
                 aspect_out = [0,1,1,1] # zelena bila cervena kmit
-            elif (state == 13): # zhas
+            elif aspect == SC.ZHASNUTO:
                 aspect_out = [0,0,0,0] # zelena bila cervena kmit
             else: # stuj
                 aspect_out = [0,0,1,0] # zelena bila cervena kmit
             idd = b_predv[id]
-            #logging.info(f'predv id {idd} state {pr_out}')
+            logging.debug(f'predv id {idd} state {pr_out}')
             self.show_zarovka(idd,pr_out)
         else:
-            if (state in dn): # jizda vlaku
+            if aspect in DN: # jizda vlaku
                 aspect_out = [1,0,0] # zelena bila kmit
-            elif (state == 9): # posun dovolen
+            elif aspect == SC.POSUN_ZAJ or aspect == SC.POSUN_NEZAJ:
                 aspect_out = [0,1,0] # zelena bila kmit
-            elif (state == 8): # PN
+            elif aspect == SC.PRIVOL:
                 aspect_out = [0,1,1] # zelena bila kmit
             else: # stuj
                 aspect_out = [0,0,0] # zelena bila kmit
-        #logging.info(f'show nav {id} = {state} - {aspect_out}')
+        logging.debug(f'show nav {id} = {aspect} - {aspect_out}')
         self.show_nav_zarovky(b_nav[id], aspect_out) # navest na dane vystupy
-    
 
-
-    def show_nav_zarovky(self, firstid: int, state: list) -> None:
+    def show_nav_zarovky(self, firstid: int, states: List[int]) -> None:
         id_ = firstid
-        i = 0
-        for sta in state:
-            if sta:
-              sta1 = False
-              sta2 = True
-            else:
-              sta1 = True
-              sta2 = False
-            result = self.pt_put(f'/blockState/{id_}', {'blockState': {'enabled': True, 'activeOutput': sta1, 'activeInput': False}})
-            id_ += 1
-            result = self.pt_put(f'/blockState/{id_}', {'blockState': {'enabled': True, 'activeOutput': sta2, 'activeInput': False}})
-            id_ += 1
-            i   += 1
+        for sta in states:
+            self.pt_put(f'/blockState/{id_}', {'blockState': {'activeOutput': sta}})
+            id_ += 2
 
     def show_zarovka(self, id: int, sta: bool) -> None:
-        if sta:
-            sta1 = False
-            sta2 = True
-        else:
-            sta1 = True
-            sta2 = False
-        #logging.info(f'set id {id} state {sta1}')
-        result = self.pt_put(f'/blockState/{id}', {'blockState': {'enabled': True, 'activeOutput': sta1, 'activeInput': False}})
-        id += 1
-        #logging.info(f'set id {id} state {sta2}')
-        result = self.pt_put(f'/blockState/{id}', {'blockState': {'enabled': True, 'activeOutput': sta2, 'activeInput': False}})
+        logging.debug(f'set id {id} state {sta}')
+        result = self.pt_put(f'/blockState/{id}', {'blockState': {'activeOutput': sta}})
 
 
 if __name__ == '__main__':
@@ -226,7 +187,7 @@ if __name__ == '__main__':
     }.get(args['-l'], logging.INFO)
 
     logging.basicConfig(level=loglevel)
-    ACs[args['<block-id>']] = JCAC(
+    ACs[args['<block-id>']] = KDAC(
         args['<block-id>'], args['<password>']
     )
     ac.init(args['-s'], int(args['-p']))
