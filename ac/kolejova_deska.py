@@ -214,6 +214,9 @@ def show_zarovka(id: int, sta: bool) -> None:
 
 @events.on_connect
 def on_connect():
+    out_state_cache.clear()
+    utils.blocks.blocks_state.clear()
+
     blocks.register_change(on_signal_change, *list(B_NAV.keys())) # navestidla
     blocks.register_change(on_button_change, 600) # tl_PrS
 
