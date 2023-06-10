@@ -49,15 +49,13 @@ class SC: # SignalCode
 
 out_state_cache: Dict[int, bool] = {}
 
-B_NAV = {131:502, 130:510, 136:536, 137:542, 138:548, 132:516, 133:522, 134:528} # seznam navestidel a maket na kolejove desce
+B_NAV = {131:502, 130:510, 136:536, 137:542, 138:548, 132:518, 133:524, 134:530} # seznam navestidel a maket na kolejove desce
 B_PREDV = {131:572, 130:570}
 NAV_VJEZD = [130, 131]
 DN = [SC.VOLNO, SC.VYSTRAHA, SC.OCEK40, SC.VOLNO40, SC.VYSTRAHA40, SC.OCEK4040] # navesti pro vlak dovolujici jizdu - maketa zelena
 PT_USERNAME = 'kolejovadeska'
 PT_PASSWORD = 'autobusikarus'
 
-CESTY_SK = {120:554, 121:556, 122:558, 123:560}
-CESTY_LK = {110:562, 111:564, 112:566, 113:568}
 
 class Railway:
     def __init__(self, block: int, outfree: int, outdir1: int, outdir2: int):
@@ -71,8 +69,27 @@ RAILWAYS = {
     60: Railway(60, 588, 586, 590), # Ulanka -> Harmanec
 }
 
-uSK = False
-uLK = False
+class IK:  # Izolovana kolejnice
+    """
+    Pokud je pri obsazeni KO `blockid` aktivni alespon jedna z jizdnich cest
+    `paths`, dojde k rozsvieni indikace izolovane kolejnice.
+    Indikace je zrusena v momente uvolneni kolejoveho obvodu.
+    """
+    def __init__(self, indid: int, trackid: int, paths: List[int]):
+        self.indid = indid
+        self.trackid = trackid
+        self.paths = paths
+        self.output = False
+
+
+IKs = {
+    111: [IK(554, 111, [110, 111, 112, 113])],  # IK1
+    108: [IK(556, 108, [102]), IK(558, 108, [100])],  # IK2, IK3
+    107: [IK(558, 107, [101])],  # IK4
+    106: [IK(562, 106, [131]), IK(564, 106, [130]), IK(566, 106, [132])],  # IK5, IK6, IK7
+    105: [IK(568, 105, [120, 121, 122, 123])],  # IK8
+}
+
 
 def pt_put(path: str, req_data: Dict[str, Any]) -> Dict[str, Any]:
     return pt.put(path, req_data, PT_USERNAME, PT_PASSWORD)
@@ -86,34 +103,37 @@ def set_output(blockid: int, state: bool) -> None:
 
 
 def on_signal_change(block) -> None:
-    logging.debug(f'changed {block["name"]}...{block}')
+    logging.debug(f'Changed {block["name"]}...{block}')
     id = block['id']
     if id in B_NAV:
         aspect = block['blockState']['signal']
-        logging.debug(f'nav {block["name"]} aspect = {aspect}')
+        logging.info(f'nav {block["name"]} aspect = {aspect}')
         show_nav(id, aspect)
 
-def on_track_change(block) -> None:
-    global uSK, uLK
-    if id == 105: # usek LK
-        newstate = block['blockState']['state'] == "occupied"
-        if newstate != uLK: # test na zmenu obsazeni
-            uLK = newstate
-            for cesta_id in CESTY_LK.keys():
-                cesta_stav = pt.get(f'/jc/{cesta_id}/?state=True')['jc']['state']['active']
-                set_output(CESTY_LK[cesta_id], cesta_stav and newstate)
 
-    if id == 111: # usek SK
-        newstate = block['blockState']['state'] == "occupied"
-        if newstate != uSK: # test na zmenu obsazeni
-            uSK = newstate
-            for cesta_id in CESTY_SK.keys():
-                cesta_stav = pt.get(f'/jc/{cesta_id}/?state=True')['jc']['state']['active']
-                set_output(CESTY_SK[cesta_id], cesta_stav and newstate)
+def any_path_active(pathids: List[int]) -> bool:
+    for pathid in pathids:
+        if pt.get(f'/jc/{pathid}/?state=True')['jc']['state']['active']:
+            return True
+    return False
+
+
+def on_ik_change(block) -> None:
+    if block['id'] not in IKs.keys():
+        return
+
+    for ik in IKs[block['id']]:
+        if block['blockState']['state'] == 'occupied':
+            if any_path_active(ik.paths) and not ik.output:
+                set_output(ik.indid, True)
+                ik.output = True
+        else:
+            if ik.output:
+                set_output(ik.indid, False)
+                ik.output = False
 
 
 def on_railway_change(block) -> None:
-    print("Railway changed:", block)
     state = block['blockState']
     railway = RAILWAYS[block['id']]
     set_output(railway.outfree, state['free'])
@@ -171,22 +191,21 @@ def show_zarovka(id: int, sta: bool) -> None:
 
 @events.on_connect
 def on_connect():
+    for signal in B_NAV.keys():
+        on_signal_change(pt.get(f'/blocks/{signal}?state=true')['block'])
     blocks.register_change(on_signal_change, *list(B_NAV.keys())) # navestidla
-    blocks.register_change(on_track_change, 105) # ul_LK
-    blocks.register_change(on_track_change, 111) # ul_SK
     blocks.register_change(on_button_change, 600) # tl_PrS
 
     for railway in RAILWAYS.values():
         on_railway_change(pt.get(f'/blocks/{railway.block}?state=true')['block'])
         blocks.register_change(on_railway_change, railway.block)
-
     for id in B_NAV.keys():
         aspect = pt.get(f'/blockState/{id}')['blockState']['signal'] # get aspect from nav
         show_nav(id, aspect)
-    for blkid in CESTY_LK.values():
-        set_output(blkid, False)
-    for blkid in CESTY_SK.values():
-        set_output(blkid, False)
+    for iks in IKs.values():
+        for ik in iks:
+            on_ik_change(pt.get(f'/blocks/{ik.trackid}?state=true')['block'])
+            blocks.register_change(on_ik_change, ik.trackid)
 
     logging.info(f'End of start seq.')
 
