@@ -49,9 +49,10 @@ class SC: # SignalCode
 
 out_state_cache: Dict[int, bool] = {}
 
-B_NAV = {131:502, 130:510, 136:536, 137:542, 138:548, 132:518, 133:524, 134:530} # seznam navestidel a maket na kolejove desce
+B_NAV = {131:502, 130:510, 136:536, 137:542, 138:548, 132:518, 133:524, 134:530, 148:574} # seznam navestidel a maket na kolejove desce
 B_PREDV = {131:572, 130:570}
 NAV_VJEZD = [130, 131]
+NAV_SE = [148]
 DN = [SC.VOLNO, SC.VYSTRAHA, SC.OCEK40, SC.VOLNO40, SC.VYSTRAHA40, SC.OCEK4040] # navesti pro vlak dovolujici jizdu - maketa zelena
 PT_USERNAME = 'kolejovadeska'
 PT_PASSWORD = 'autobusikarus'
@@ -163,6 +164,8 @@ def show_nav(id: int, aspect: int) -> None:
             aspect_out = [0,0,1,0] # zelena bila cervena kmit
 
         show_zarovka(B_PREDV[id], aspect in DN)
+    elif id in NAV_SE:
+        aspect_out = [1 if aspect == SC.POSUN_ZAJ or aspect == SC.POSUN_NEZAJ else 0]
     else:
         if aspect in DN: # jizda vlaku
             aspect_out = [1,0,0] # zelena bila kmit
