@@ -29,12 +29,13 @@ import utils.blocks
 
 JC = Dict[str, Any]
 base = 501
-b_nav = {130:base+8,131:base+0,132:base+16,133:base+22,134:base+28,136:base+34,137:base+40,138:base+46} # seznam navestidel a XpressNET adres
+b_nav = {131:501,130:509,136:535,137:541,138:547,132:517,133:523,134:529} # seznam navestidel a maket na kolejove desce
+b_predv = {131:571,130:569}
 nav_vjezd = [130,131] 
 dn = [1,2,3,4,6,7] # navesti pro vlak dovolujici jizdu - maketa zelena
 
-cesty_LK = {120:553,121:555,122:557,123:559}
-cesty_SK = {110:561,111:563,112:565,113:567}
+cesty_SK = {120:553,121:555,122:557,123:559}
+cesty_LK = {110:561,111:563,112:565,113:567}
 
 class JCAC(AC):
     """
@@ -57,6 +58,8 @@ class JCAC(AC):
             ac.blocks.register_change(self.on_block_change, _id) # navestidla
         ac.blocks.register_change(self.on_block_change, 105) # ul_LK
         ac.blocks.register_change(self.on_block_change, 111) # ul_SK
+
+        ac.blocks.register_change(self.on_block_change, 600) # tl_PrS
 
         self.statestr_add(f'zjisti aktualni stavy.') # init leds
         for id in b_nav.keys():
@@ -117,7 +120,7 @@ class JCAC(AC):
                             sta2 = False
                         result = self.pt_put(f'/blockState/{id1}', {'blockState': {'enabled': True, 'activeOutput': sta1, 'activeInput': False}})
                         result = self.pt_put(f'/blockState/{id2}', {'blockState': {'enabled': True, 'activeOutput': sta2, 'activeInput': False}})
-            if id==111: # usek LK
+            if id==111: # usek SK
                 newstate = block['blockState']['state'] == "occupied"
                 if (newstate != self.uSK): # test na zmenu obsazeni
                     self.uSK = newstate
@@ -135,25 +138,38 @@ class JCAC(AC):
                             sta2 = False
                         result = self.pt_put(f'/blockState/{id1}', {'blockState': {'enabled': True, 'activeOutput': sta1, 'activeInput': False}})
                         result = self.pt_put(f'/blockState/{id2}', {'blockState': {'enabled': True, 'activeOutput': sta2, 'activeInput': False}})
-                          
-
+            if id==600: # tl PrS
+                logging.info('PrS')
+                n = self.pt_get(f'/blockState/130/?state=True')
+                logging.info(n)
+                if block['blockState']['activeInput']:
+                    logging.info('PrS zap')
+                    result = self.pt_put(f'/blockState/130', {'blockState': {'signal': 8}})
+                else:
+                    logging.info('PrS vyp')
+                    result = self.pt_put(f'/blockState/130', {'blockState': {'signal': 0}})
+                
                 
 
     def show_nav(self, id: int, state: int) -> None:
         if state<0:
             return
-        if (id in nav_vjezd) : # L
+        if (id in nav_vjezd) : # L / S
+            pr_out = 0
             if (state in dn): # jizda vlaku
                 aspect_out = [1,0,0,0] # zelena bila cervena kmit
+                pr_out = 1
             elif (state == 9): # posun dovolen
                 aspect_out = [0,1,0,0] # zelena bila cervena kmit
             elif (state == 8): # PN
-                aspect_out = [0,1,0,1] # zelena bila cervena kmit
+                aspect_out = [0,1,1,1] # zelena bila cervena kmit
             elif (state == 13): # zhas
                 aspect_out = [0,0,0,0] # zelena bila cervena kmit
-
             else: # stuj
                 aspect_out = [0,0,1,0] # zelena bila cervena kmit
+            idd = b_predv[id]
+            #logging.info(f'predv id {idd} state {pr_out}')
+            self.show_zarovka(idd,pr_out)
         else:
             if (state in dn): # jizda vlaku
                 aspect_out = [1,0,0] # zelena bila kmit
@@ -163,8 +179,9 @@ class JCAC(AC):
                 aspect_out = [0,1,1] # zelena bila kmit
             else: # stuj
                 aspect_out = [0,0,0] # zelena bila kmit
-        logging.info(f'show nav {id} = {state} - {aspect_out}')
+        #logging.info(f'show nav {id} = {state} - {aspect_out}')
         self.show_nav_zarovky(b_nav[id], aspect_out) # navest na dane vystupy
+    
 
 
     def show_nav_zarovky(self, firstid: int, state: list) -> None:
@@ -182,6 +199,20 @@ class JCAC(AC):
             result = self.pt_put(f'/blockState/{id_}', {'blockState': {'enabled': True, 'activeOutput': sta2, 'activeInput': False}})
             id_ += 1
             i   += 1
+
+    def show_zarovka(self, id: int, sta: bool) -> None:
+        if sta:
+            sta1 = False
+            sta2 = True
+        else:
+            sta1 = True
+            sta2 = False
+        #logging.info(f'set id {id} state {sta1}')
+        result = self.pt_put(f'/blockState/{id}', {'blockState': {'enabled': True, 'activeOutput': sta1, 'activeInput': False}})
+        id += 1
+        #logging.info(f'set id {id} state {sta2}')
+        result = self.pt_put(f'/blockState/{id}', {'blockState': {'enabled': True, 'activeOutput': sta2, 'activeInput': False}})
+
 
 if __name__ == '__main__':
     args = docopt(__doc__)
