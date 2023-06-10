@@ -57,6 +57,18 @@ PT_PASSWORD = 'autobusikarus'
 CESTY_SK = {120:554, 121:556, 122:558, 123:560}
 CESTY_LK = {110:562, 111:564, 112:566, 113:568}
 
+class Railway:
+    def __init__(self, block: int, outfree: int, outdir1: int, outdir2: int):
+        self.block = block
+        self.outfree = outfree
+        self.outdir1 = outdir1
+        self.outdir2 = outdir2
+
+RAILWAYS = {
+    50: Railway(50, 582, 584, 580), # Smycka -> Ulanka
+    60: Railway(60, 588, 586, 590), # Ulanka -> Harmanec
+}
+
 uSK = False
 uLK = False
 
@@ -64,9 +76,7 @@ def pt_put(path: str, req_data: Dict[str, Any]) -> Dict[str, Any]:
     return pt.put(path, req_data, PT_USERNAME, PT_PASSWORD)
 
 
-def on_block_change(block) -> None:
-    global uSK, uLK
-
+def on_signal_change(block) -> None:
     logging.debug(f'changed {block["name"]}...{block}')
     id = block['id']
     if id in B_NAV:
@@ -74,6 +84,8 @@ def on_block_change(block) -> None:
         logging.debug(f'nav {block["name"]} aspect = {aspect}')
         show_nav(id, aspect)
 
+def on_track_change(block) -> None:
+    global uSK, uLK
     if id == 105: # usek LK
         newstate = block['blockState']['state'] == "occupied"
         if newstate != uLK: # test na zmenu obsazeni
@@ -90,6 +102,17 @@ def on_block_change(block) -> None:
                 cesta_stav = pt.get(f'/jc/{cesta_id}/?state=True')['jc']['state']['active']
                 pt_put(f'/blockState/{CESTY_SK[cesta_id]}', {'blockState': {'activeOutput': cesta_stav and newstate}})
 
+
+def on_railway_change(block) -> None:
+    print("Railway changed:", block)
+    state = block['blockState']
+    railway = RAILWAYS[block['id']]
+    pt_put(f'/blockState/{railway.outfree}', {'blockState': {'activeOutput': state['free']}})
+    pt_put(f'/blockState/{railway.outdir1}', {'blockState': {'activeOutput': state['direction'] == 1}})
+    pt_put(f'/blockState/{railway.outdir2}', {'blockState': {'activeOutput': state['direction'] == 2}})
+
+
+def on_button_change(block) -> None:
     if id == 600: # tl PrS
         logging.debug('PrS')
         # pt_put(f'/blockState/130', {'blockState': {'signal': 8 if block['blockState']['activeInput'] else 0}})
@@ -139,10 +162,14 @@ def show_zarovka(id: int, sta: bool) -> None:
 
 @events.on_connect
 def on_connect():
-    blocks.register_change(on_block_change, *list(B_NAV.keys())) # navestidla
-    blocks.register_change(on_block_change, 105) # ul_LK
-    blocks.register_change(on_block_change, 111) # ul_SK
-    blocks.register_change(on_block_change, 600) # tl_PrS
+    blocks.register_change(on_signal_change, *list(B_NAV.keys())) # navestidla
+    blocks.register_change(on_track_change, 105) # ul_LK
+    blocks.register_change(on_track_change, 111) # ul_SK
+    blocks.register_change(on_button_change, 600) # tl_PrS
+
+    for railway in RAILWAYS.values():
+        on_railway_change(pt.get(f'/blocks/{railway.block}?state=true')['block'])
+        blocks.register_change(on_railway_change, railway.block)
 
     for id in B_NAV.keys():
         aspect = pt.get(f'/blockState/{id}')['blockState']['signal'] # get aspect from nav
