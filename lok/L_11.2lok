@@ -1,0 +1,16 @@
+﻿[global]
+version=2.0
+
+[11]
+nazev=brejlovec
+majitel=MS
+oznaceni=750.111-7 MS
+poznamka=
+trida=1
+max_rychlost=70
+prechodnost=0
+pom_take=
+pom_release=
+func_vyznam={světla přední};{světla koncová};{dálkový světlomet};{posun};{vypnutí křivek};{plný výkon};{volnoběh};{houkačka střední};{zvuk};{houkačka krátká};{houkačka dlouhá};;{povolte brzdy úplně};{píšťala dlouhá};{píšťala krátká};;;;;;{broušení okolků};;;;;;;;{ztlumení zvuků};
+func_type=PPPPPPPMPMMPMMMPPPPPPPPPPPPPP
+

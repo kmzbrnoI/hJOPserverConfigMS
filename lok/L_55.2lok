@@ -4,13 +4,13 @@ version=2.0
 [55]
 nazev=brejlovec
 majitel=MS
-oznaceni=754.055-2 MX
+oznaceni=754.055-2 MS
 poznamka=
 trida=1
 max_rychlost=70
 prechodnost=0
 pom_take=
 pom_release=
-func_vyznam={světla koncová};{zvuk};{houkačka dlouhá};{povolte brzdy úplně};{píšťala 2};{volnoběh};{plný výkon};{světla přední};{světla zadní};{houkačka krátká};;;;;;;;;;;{broušení okolků};;;;;;;;{ztlumení zvuků};
-func_type=PPMMMPPPPMPPPPPPPPPPPPPPPPPPP
+func_vyznam={světla přední};{světla koncová};{dálkový světlomet};{posun};{vypnutí křivek};{plný výkon};;{houkačka střední};{zvuk};;;;{povolte brzdy úplně};{píšťala dlouhá};{píšťala krátká};;;;;;{broušení okolků};;{volnoběh};;;;;;{ztlumení zvuků};
+func_type=PPPPPPPMPMMPMMMPPPPPPPPPPPPPP
 

@@ -11,6 +11,6 @@ max_rychlost=45
 prechodnost=0
 pom_take=
 pom_release=
-func_vyznam={světla koncová};{zvuk};{houkačka dlouhá};{povolte brzdy úplně};;{volnoběh};{plný výkon};{světla přední};{světla zadní};{světlo v kabině};;;;{píšťala 2};{houkačka krátká};;;;;;{broušení okolků};;;;;;;;{ztlumení zvuků};
-func_type=PPMMMPPPPPPPPMMPPPPPPPPPPPPPP
+func_vyznam={světla přední};{světla koncová};{dálkový světlomet};{posun};{vypnutí křivek};;{volnoběh};{houkačka dlouhá};{zvuk};{houkačka krátká};;{houkačka dvojitá};{povolte brzdy úplně};;;;{píšťalka výpravčího};;;;{broušení okolků};;;;;{plný výkon};;;{ztlumení zvuků};
+func_type=PPPPPPPMPMPMMMMPMPPPPPPPPPPPP
 

@@ -1,0 +1,16 @@
+﻿[global]
+version=2.0
+
+[151]
+nazev=bafik
+majitel=MS
+oznaceni=010.051-X
+poznamka=
+trida=2
+max_rychlost=70
+prechodnost=0
+pom_take=
+pom_release=
+func_vyznam={světla koncová};;;;;;;;;;;;;;;{interiér};;;;;;;;;;;;;{ztlumení zvuků};
+func_type=PPPPPPPMPMPPPPPPPPPPPPPPPPPPP
+

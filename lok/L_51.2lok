@@ -1,0 +1,16 @@
+﻿[global]
+version=2.0
+
+[51]
+nazev=šukafon
+majitel=MS
+oznaceni=810.051-X
+poznamka=
+trida=2
+max_rychlost=70
+prechodnost=0
+pom_take=
+pom_release=
+func_vyznam={světla přední};{světla koncová};{dálkový světlomet};{posun};{světlo v kabině};{interiér};{volnoběh};{houkačka dlouhá};{zvuk};{houkačka krátká};;;;;;;;;;;{broušení okolků};;;;;;;;{ztlumení zvuků};
+func_type=PPPPPPPMPMPPPPPPPPPPPPPPPPPPP
+

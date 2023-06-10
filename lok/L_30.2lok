@@ -4,13 +4,13 @@ version=2.0
 [30]
 nazev=bardotka
 majitel=MS
-oznaceni=752.030-X MS
+oznaceni=752.030-X MX
 poznamka=
 trida=1
 max_rychlost=45
 prechodnost=0
 pom_take=
 pom_release=
-func_vyznam={světla koncová};{zvuk};{houkačka dlouhá};{povolte brzdy úplně};{houkačka krátká};{volnoběh};{plný výkon};{světla přední};{světla zadní};;;;;;{houkačka krátká};;;;;;{broušení okolků};;;;;;;;{ztlumení zvuků};
-func_type=PPMMMPPPPPPPPPMPPPPPPPPPPPPPP
+func_vyznam={dálkový světlomet};{světla koncová};{světla přední};;;;{volnoběh};{houkačka dvojitá};{zvuk};{houkačka krátká};{houkačka dlouhá};;{povolte brzdy úplně};{píšťala dlouhá};{píšťala krátká};{kompresor};;;;;{broušení okolků};;;;;{plný výkon};;;{ztlumení zvuků};
+func_type=PPPMMPPMPMMPMMMPPPPPPPPPPPPPP
 

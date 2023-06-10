@@ -1,0 +1,16 @@
+﻿[global]
+version=2.0
+
+[70]
+nazev=Brejlovec
+majitel=MS
+oznaceni=754 070-X MX
+poznamka=
+trida=1
+max_rychlost=70
+prechodnost=0
+pom_take=
+pom_release=
+func_vyznam={světla koncová};{zvuk};;;;;;{světla přední};{světla zadní};{houkačka krátká};;{houkačka dlouhá};{povolte brzdy úplně};{píšťala dlouhá};{píšťala krátká};;;;;;{broušení okolků};;;;;;;;{ztlumení zvuků};
+func_type=PPMMMPPPPMPMMMMPPPPPPPPPPPPPP
+

@@ -1,0 +1,16 @@
+﻿[global]
+version=2.0
+
+[16]
+nazev=pomeranč
+majitel=PK
+oznaceni=T 678.012 MX
+poznamka=
+trida=1
+max_rychlost=45
+prechodnost=0
+pom_take=
+pom_release=
+func_vyznam={světla přední};{světla koncová};{dálkový světlomet};{posun};{stanoviště  };{boční tabulky};{plný výkon};;{zvuk};;{houkačka dlouhá};;{povolte brzdy úplně};;;;;;;;{broušení okolků};;;;;;;;{ztlumení zvuků};
+func_type=PPPPPPPPPPMPMMMPPPPPPPPPPPPPP
+

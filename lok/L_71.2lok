@@ -2,15 +2,15 @@
 version=2.0
 
 [71]
-nazev=Brejlovec
-majitel=Milan Sáblík
-oznaceni=753 271-6
+nazev=brejlovec
+majitel=MS
+oznaceni=753.271-6 MX
 poznamka=
 trida=1
-max_rychlost=80
+max_rychlost=45
 prechodnost=0
 pom_take=
 pom_release=
-func_vyznam={koncová světla};{zvuk};;;;;;{světla};{světla vzad};;;;;;;;;;;;;;;;;;;;;
-func_type=PPPPPPPPPPPPPPPPPPPPPPPPPPPPP
+func_vyznam={světla koncová};{zvuk};;{povolte brzdy úplně};;{volnoběh};{plný výkon};{světla přední};{světla zadní};;;;;;;;;;;;{broušení okolků};;;;;;;;{ztlumení zvuků};
+func_type=PPMMMPPPPMPPPPPPPPPPPPPPPPPPP
 

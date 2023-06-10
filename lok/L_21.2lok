@@ -4,13 +4,13 @@ version=2.0
 [21]
 nazev=čmelák
 majitel=MS
-oznaceni=770.021-X MX
+oznaceni=770.021-4 MX
 poznamka=
 trida=1
 max_rychlost=45
 prechodnost=0
 pom_take=
 pom_release=
-func_vyznam={světla koncová};{zvuk};{houkačka dlouhá};{povolte brzdy úplně};;{volnoběh};{plný výkon};{světla přední};{světla zadní};{světlo v kabině};;{houkačka krátká};;;;;{píšťalka výpravčího};;{rozvěšení šroubovky};;{broušení okolků};;;;;;;;{ztlumení zvuků};
-func_type=PPMMMPPPPPPMPPPPMPMPPPPPPPPPP
+func_vyznam={světla přední};{světla zadní};{dálkový světlomet};{posun};{vypnutí křivek};{světlo v kabině};{volnoběh};;{zvuk};;{houkačka dlouhá};{houkačka krátká};{povolte brzdy úplně};;;;;;;;{broušení okolků};;;;;{plný výkon};;;{ztlumení zvuků};
+func_type=PPPPPPPMPMMMMPPPMPMPPPPPPPPPP
 
