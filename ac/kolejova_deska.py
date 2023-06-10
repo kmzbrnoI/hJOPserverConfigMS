@@ -47,6 +47,8 @@ class SC: # SignalCode
     OPAK_40OCEK40 = 16
 
 
+out_state_cache: Dict[int, bool] = {}
+
 B_NAV = {131:502, 130:510, 136:536, 137:542, 138:548, 132:516, 133:522, 134:528} # seznam navestidel a maket na kolejove desce
 B_PREDV = {131:572, 130:570}
 NAV_VJEZD = [130, 131]
@@ -76,6 +78,13 @@ def pt_put(path: str, req_data: Dict[str, Any]) -> Dict[str, Any]:
     return pt.put(path, req_data, PT_USERNAME, PT_PASSWORD)
 
 
+def set_output(blockid: int, state: bool) -> None:
+    if out_state_cache.get(blockid, None) == state:
+        return
+    out_state_cache[blockid] = state
+    pt_put(f'/blockState/{blockid}', {'blockState': {'activeOutput': state}})
+
+
 def on_signal_change(block) -> None:
     logging.debug(f'changed {block["name"]}...{block}')
     id = block['id']
@@ -92,7 +101,7 @@ def on_track_change(block) -> None:
             uLK = newstate
             for cesta_id in CESTY_LK.keys():
                 cesta_stav = pt.get(f'/jc/{cesta_id}/?state=True')['jc']['state']['active']
-                pt_put(f'/blockState/{CESTY_LK[cesta_id]}', {'blockState': {'activeOutput': cesta_stav and newstate}})
+                set_output(CESTY_LK[cesta_id], cesta_stav and newstate)
 
     if id == 111: # usek SK
         newstate = block['blockState']['state'] == "occupied"
@@ -100,16 +109,16 @@ def on_track_change(block) -> None:
             uSK = newstate
             for cesta_id in CESTY_SK.keys():
                 cesta_stav = pt.get(f'/jc/{cesta_id}/?state=True')['jc']['state']['active']
-                pt_put(f'/blockState/{CESTY_SK[cesta_id]}', {'blockState': {'activeOutput': cesta_stav and newstate}})
+                set_output(CESTY_SK[cesta_id], cesta_stav and newstate)
 
 
 def on_railway_change(block) -> None:
     print("Railway changed:", block)
     state = block['blockState']
     railway = RAILWAYS[block['id']]
-    pt_put(f'/blockState/{railway.outfree}', {'blockState': {'activeOutput': state['free']}})
-    pt_put(f'/blockState/{railway.outdir1}', {'blockState': {'activeOutput': state['direction'] == 1}})
-    pt_put(f'/blockState/{railway.outdir2}', {'blockState': {'activeOutput': state['direction'] == 2}})
+    set_output(railway.outfree, state['free'])
+    set_output(railway.outdir1, state['direction'] == 1)
+    set_output(railway.outdir2, state['direction'] == 2)
 
 
 def on_button_change(block) -> None:
@@ -151,13 +160,13 @@ def show_nav(id: int, aspect: int) -> None:
 def show_nav_zarovky(firstid: int, states: List[int]) -> None:
     id_ = firstid
     for sta in states:
-        pt_put(f'/blockState/{id_}', {'blockState': {'activeOutput': sta}})
+        set_output(id_, sta)
         id_ += 2
 
 
 def show_zarovka(id: int, sta: bool) -> None:
     logging.debug(f'set id {id} state {sta}')
-    pt_put(f'/blockState/{id}', {'blockState': {'activeOutput': sta}})
+    set_output(id, sta)
 
 
 @events.on_connect
@@ -175,9 +184,9 @@ def on_connect():
         aspect = pt.get(f'/blockState/{id}')['blockState']['signal'] # get aspect from nav
         show_nav(id, aspect)
     for blkid in CESTY_LK.values():
-        pt_put(f'/blockState/{blkid}', {'blockState': {'activeOutput': False}})
+        set_output(blkid, False)
     for blkid in CESTY_SK.values():
-        pt_put(f'/blockState/{blkid}', {'blockState': {'activeOutput': False}})
+        set_output(blkid, False)
 
     logging.info(f'End of start seq.')
 
