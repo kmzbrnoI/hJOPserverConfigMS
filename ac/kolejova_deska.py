@@ -25,6 +25,7 @@ import ac.blocks as blocks
 import ac.panel_client as panel_client
 import ac.events as events
 from ac import pt as pt
+import utils.blocks
 
 
 class SC: # SignalCode
@@ -92,6 +93,22 @@ IKs = {
 }
 
 
+class PNSummary:
+    def __init__(self, indid: int, signals: List[int]):
+        self.indid = indid
+        self.signals = signals
+
+    def any_signal_pn(self) -> bool:
+        return any([utils.blocks.state(signalid)['signal'] == SC.PRIVOL
+                    for signalid in self.signals])
+
+
+PNs = [
+    PNSummary(576, [136, 137, 139]),
+    PNSummary(578, [132, 133, 135]),
+]
+
+
 def pt_put(path: str, req_data: Dict[str, Any]) -> Dict[str, Any]:
     return pt.put(path, req_data, PT_USERNAME, PT_PASSWORD)
 
@@ -110,6 +127,9 @@ def on_signal_change(block) -> None:
         aspect = block['blockState']['signal']
         logging.info(f'nav {block["name"]} aspect = {aspect}')
         show_nav(id, aspect)
+
+    for pn in PNs:
+        set_output(pn.indid, pn.any_signal_pn())
 
 
 def any_path_active(pathids: List[int]) -> bool:
@@ -194,8 +214,6 @@ def show_zarovka(id: int, sta: bool) -> None:
 
 @events.on_connect
 def on_connect():
-    for signal in B_NAV.keys():
-        on_signal_change(pt.get(f'/blocks/{signal}?state=true')['block'])
     blocks.register_change(on_signal_change, *list(B_NAV.keys())) # navestidla
     blocks.register_change(on_button_change, 600) # tl_PrS
 
@@ -203,12 +221,13 @@ def on_connect():
         on_railway_change(pt.get(f'/blocks/{railway.block}?state=true')['block'])
         blocks.register_change(on_railway_change, railway.block)
     for id in B_NAV.keys():
-        aspect = pt.get(f'/blockState/{id}')['blockState']['signal'] # get aspect from nav
-        show_nav(id, aspect)
+        show_nav(id, utils.blocks.state(id)['signal'])
     for iks in IKs.values():
         for ik in iks:
             on_ik_change(pt.get(f'/blocks/{ik.trackid}?state=true')['block'])
             blocks.register_change(on_ik_change, ik.trackid)
+    for pn in PNs:
+        set_output(pn.indid, pn.any_signal_pn())
 
     logging.info(f'End of start seq.')
 
