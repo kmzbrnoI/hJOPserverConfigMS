@@ -28,7 +28,7 @@ from ac import pt as pt
 import utils.blocks
 
 
-class SC: # SignalCode
+class SC:  # SignalCode
     STUJ = 0
     VOLNO = 1
     VYSTRAHA = 2
@@ -50,11 +50,12 @@ class SC: # SignalCode
 
 out_state_cache: Dict[int, bool] = {}
 
-B_NAV = {131:502, 130:510, 136:536, 137:542, 138:548, 132:518, 133:524, 134:530, 148:574} # seznam navestidel a maket na kolejove desce
-B_PREDV = {131:572, 130:570}
+# signal IDs to KD output blocks mapping
+B_NAV = {131: 502, 130: 510, 136: 536, 137: 542, 138: 548, 132: 518, 133: 524, 134: 530, 148: 574}
+B_PREDV = {131: 572, 130: 570}
 NAV_VJEZD = [130, 131]
 NAV_SE = [148]
-DN = [SC.VOLNO, SC.VYSTRAHA, SC.OCEK40, SC.VOLNO40, SC.VYSTRAHA40, SC.OCEK4040] # navesti pro vlak dovolujici jizdu - maketa zelena
+DN = [SC.VOLNO, SC.VYSTRAHA, SC.OCEK40, SC.VOLNO40, SC.VYSTRAHA40, SC.OCEK4040]  # navesti pro vlak dovolujici jizdu - maketa zelena
 PT_USERNAME = 'kolejovadeska'
 PT_PASSWORD = 'autobusikarus'
 
@@ -66,10 +67,12 @@ class Railway:
         self.outdir1 = outdir1
         self.outdir2 = outdir2
 
+
 RAILWAYS = {
-    50: Railway(50, 582, 584, 580), # Smycka -> Ulanka
-    60: Railway(60, 588, 586, 590), # Ulanka -> Harmanec
+    50: Railway(50, 582, 584, 580),  # Smycka -> Ulanka
+    60: Railway(60, 588, 586, 590),  # Ulanka -> Harmanec
 }
+
 
 class IK:  # Izolovana kolejnice
     """
@@ -163,41 +166,41 @@ def on_railway_change(block) -> None:
 
 
 def on_button_change(block) -> None:
-    if id == 600: # tl PrS
+    if id == 600:  # tl PrS
         logging.debug('PrS')
-        # pt_put(f'/blockState/130', {'blockState': {'signal': 8 if block['blockState']['activeInput'] else 0}})
+        #  pt_put(f'/blockState/130', {'blockState': {'signal': 8 if block['blockState']['activeInput'] else 0}})
 
 
 def show_nav(id: int, aspect: int) -> None:
     if aspect < 0:
         return
-    if id in NAV_VJEZD : # L / S
-        if aspect in DN: # jizda vlaku
-            aspect_out = [1,0,0,0] # zelena bila cervena kmit
+    if id in NAV_VJEZD:  # L / S
+        if aspect in DN:  # jizda vlaku
+            aspect_out = [1, 0, 0, 0]  # zelena bila cervena kmit
         elif aspect == SC.POSUN_ZAJ or aspect == SC.POSUN_NEZAJ:
-            aspect_out = [0,1,0,0] # zelena bila cervena kmit
+            aspect_out = [0, 1, 0, 0]  # zelena bila cervena kmit
         elif aspect == SC.PRIVOL:
-            aspect_out = [0,1,1,1] # zelena bila cervena kmit
+            aspect_out = [0, 1, 1, 1]  # zelena bila cervena kmit
         elif aspect == SC.ZHASNUTO:
-            aspect_out = [0,0,0,0] # zelena bila cervena kmit
-        else: # stuj
-            aspect_out = [0,0,1,0] # zelena bila cervena kmit
+            aspect_out = [0, 0, 0, 0]  # zelena bila cervena kmit
+        else:  # stuj
+            aspect_out = [0, 0, 1, 0]  # zelena bila cervena kmit
 
         show_zarovka(B_PREDV[id], aspect in DN)
     elif id in NAV_SE:
         aspect_out = [1 if aspect == SC.POSUN_ZAJ or aspect == SC.POSUN_NEZAJ else 0]
     else:
-        if aspect in DN: # jizda vlaku
-            aspect_out = [1,0,0] # zelena bila kmit
+        if aspect in DN:  # jizda vlaku
+            aspect_out = [1, 0, 0]  # zelena bila kmit
         elif aspect == SC.POSUN_ZAJ or aspect == SC.POSUN_NEZAJ:
-            aspect_out = [0,1,0] # zelena bila kmit
+            aspect_out = [0, 1, 0]  # zelena bila kmit
         elif aspect == SC.PRIVOL:
-            aspect_out = [0,1,1] # zelena bila kmit
-        else: # stuj
-            aspect_out = [0,0,0] # zelena bila kmit
+            aspect_out = [0, 1, 1]  # zelena bila kmit
+        else:  # stuj
+            aspect_out = [0, 0, 0]  # zelena bila kmit
 
     logging.debug(f'show nav {id} = {aspect} - {aspect_out}')
-    show_nav_zarovky(B_NAV[id], aspect_out) # navest na dane vystupy
+    show_nav_zarovky(B_NAV[id], aspect_out)  # navest na dane vystupy
 
 
 def show_nav_zarovky(firstid: int, states: List[int]) -> None:
@@ -217,8 +220,8 @@ def on_connect():
     out_state_cache.clear()
     utils.blocks.blocks_state.clear()
 
-    blocks.register_change(on_signal_change, *list(B_NAV.keys())) # navestidla
-    blocks.register_change(on_button_change, 600) # tl_PrS
+    blocks.register_change(on_signal_change, *list(B_NAV.keys()))
+    blocks.register_change(on_button_change, 600)  # tl_PrS
 
     for railway in RAILWAYS.values():
         on_railway_change(pt.get(f'/blocks/{railway.block}?state=true')['block'])
@@ -232,7 +235,7 @@ def on_connect():
     for pn in PNs:
         set_output(pn.indid, pn.any_signal_pn())
 
-    logging.info(f'End of start seq.')
+    logging.info('Startup seqence finished')
 
 
 if __name__ == '__main__':
