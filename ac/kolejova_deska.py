@@ -112,10 +112,16 @@ class PNSummary:
                     for signalid in self.signals])
 
 
-PNs = [
+PNSUMMARIES = [
     PNSummary(576, [136, 137, 139]),
     PNSummary(578, [132, 133, 135]),
 ]
+
+PNS = {  # button to signal mapping
+    600: 130, 601: 131,  # L, S
+    602: 136, 603: 137, 604: 138,  # S1, S2, S3
+    605: 132, 606: 133, 607: 134,  # L1, L2, L3
+}
 
 
 def pt_put(path: str, req_data: Dict[str, Any]) -> Dict[str, Any]:
@@ -135,7 +141,7 @@ def on_signal_change(block) -> None:
     if block['id'] in B_NAV and aspect >= 0:
         show_nav(block['id'], aspect)
 
-    for pn in PNs:
+    for pn in PNSUMMARIES:
         set_output(pn.indid, pn.any_signal_pn())
 
 
@@ -168,9 +174,12 @@ def on_railway_change(block) -> None:
 
 
 def on_button_change(block) -> None:
-    if id == 600:  # tl PrS
-        logging.debug('PrS')
-        #  pt_put(f'/blockState/130', {'blockState': {'signal': 8 if block['blockState']['activeInput'] else 0}})
+    if block['id'] not in PNS:
+        return
+    btn_pressed = block['blockState']['activeInput']
+    signalid = PNS[block['id']]
+    logging.info(f'button for signal {signalid} : {btn_pressed}')
+    # TODO: de/activate PN for signal `signalid`
 
 
 def show_nav(id: int, aspect: int) -> None:
@@ -223,7 +232,7 @@ def on_connect():
     utils.blocks.blocks_state.clear()
 
     blocks.register_change(on_signal_change, *list(B_NAV.keys()))
-    blocks.register_change(on_button_change, 600)  # tl_PrS
+    blocks.register_change(on_button_change, *list(PNS.keys()))
 
     for railway in RAILWAYS.values():
         on_railway_change(pt.get(f'/blocks/{railway.block}?state=true')['block'])
@@ -234,8 +243,10 @@ def on_connect():
         for ik in iks:
             on_ik_change(pt.get(f'/blocks/{ik.trackid}?state=true')['block'])
             blocks.register_change(on_ik_change, ik.trackid)
-    for pn in PNs:
+    for pn in PNSUMMARIES:
         set_output(pn.indid, pn.any_signal_pn())
+    for buttonid in PNS.keys():
+        on_button_change(pt.get(f'/blocks/{buttonid}?state=true')['block'])
 
     logging.info('Startup seqence finished')
 
