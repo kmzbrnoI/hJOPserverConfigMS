@@ -80,19 +80,25 @@ class IK:  # Izolovana kolejnice
     `paths`, dojde k rozsvieni indikace izolovane kolejnice.
     Indikace je zrusena v momente uvolneni kolejoveho obvodu.
     """
-    def __init__(self, indid: int, trackid: int, paths: List[int]):
+    def __init__(self, name: str, indid: int, trackid: int, paths: List[int]):
+        self.name = name
         self.indid = indid
         self.trackid = trackid
         self.paths = paths
         self.output = False
 
+    def set_output(self, state: bool) -> None:
+        logging.info(f'{self.name} = {state}')
+        set_output(self.indid, state)
+        self.output = state
+
 
 IKs = {
-    111: [IK(554, 111, [110, 111, 112, 113])],  # IK1
-    108: [IK(556, 108, [102]), IK(558, 108, [100])],  # IK2, IK3
-    107: [IK(558, 107, [101])],  # IK4
-    106: [IK(562, 106, [131]), IK(564, 106, [130]), IK(566, 106, [132])],  # IK5, IK6, IK7
-    105: [IK(568, 105, [120, 121, 122, 123])],  # IK8
+    111: [IK('IK1', 554, 111, [110, 111, 112, 113])],
+    108: [IK('IK2', 556, 108, [102]), IK('Ik3', 558, 108, [100])],
+    107: [IK('IK4', 558, 107, [101])],
+    106: [IK('IK5', 562, 106, [131]), IK('IK6', 564, 106, [130]), IK('IK7', 566, 106, [132])],
+    105: [IK('IK8', 568, 105, [120, 121, 122, 123])],
 }
 
 
@@ -116,20 +122,18 @@ def pt_put(path: str, req_data: Dict[str, Any]) -> Dict[str, Any]:
     return pt.put(path, req_data, PT_USERNAME, PT_PASSWORD)
 
 
-def set_output(blockid: int, state: bool) -> None:
+def set_output(blockid: int, state: bool) -> bool:
     if out_state_cache.get(blockid, None) == state:
-        return
+        return False
     out_state_cache[blockid] = state
     pt_put(f'/blockState/{blockid}', {'blockState': {'activeOutput': state}})
+    return True
 
 
 def on_signal_change(block) -> None:
-    logging.debug(f'Changed {block["name"]}...{block}')
-    id = block['id']
-    if id in B_NAV:
-        aspect = block['blockState']['signal']
-        logging.info(f'nav {block["name"]} aspect = {aspect}')
-        show_nav(id, aspect)
+    aspect = block['blockState']['signal']
+    if block['id'] in B_NAV and aspect >= 0:
+        show_nav(block['id'], aspect)
 
     for pn in PNs:
         set_output(pn.indid, pn.any_signal_pn())
@@ -149,12 +153,10 @@ def on_ik_change(block) -> None:
     for ik in IKs[block['id']]:
         if block['blockState']['state'] == 'occupied':
             if any_path_active(ik.paths) and not ik.output:
-                set_output(ik.indid, True)
-                ik.output = True
+                ik.set_output(True)
         else:
             if ik.output:
-                set_output(ik.indid, False)
-                ik.output = False
+                ik.set_output(False)
 
 
 def on_railway_change(block) -> None:
@@ -172,8 +174,6 @@ def on_button_change(block) -> None:
 
 
 def show_nav(id: int, aspect: int) -> None:
-    if aspect < 0:
-        return
     if id in NAV_VJEZD:  # L / S
         if aspect in DN:  # jizda vlaku
             aspect_out = [1, 0, 0, 0]  # zelena bila cervena kmit
@@ -199,15 +199,17 @@ def show_nav(id: int, aspect: int) -> None:
         else:  # stuj
             aspect_out = [0, 0, 0]  # zelena bila kmit
 
-    logging.debug(f'show nav {id} = {aspect} - {aspect_out}')
-    show_nav_zarovky(B_NAV[id], aspect_out)  # navest na dane vystupy
+    if show_nav_zarovky(B_NAV[id], aspect_out):
+        logging.info(f'show nav {id} = {aspect} - {aspect_out}')
 
 
-def show_nav_zarovky(firstid: int, states: List[int]) -> None:
+def show_nav_zarovky(firstid: int, states: List[int]) -> bool:
+    result = False
     id_ = firstid
     for sta in states:
-        set_output(id_, sta)
+        result = set_output(id_, sta) or result
         id_ += 2
+    return result
 
 
 def show_zarovka(id: int, sta: bool) -> None:
