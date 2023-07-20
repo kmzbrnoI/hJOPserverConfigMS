@@ -113,9 +113,11 @@ class PNSummary:
 
 
 PNSUMMARIES = [
-    PNSummary(576, [136, 137, 139]),
-    PNSummary(578, [132, 133, 135]),
+    PNSummary(576, [136, 137, 138]),
+    PNSummary(578, [132, 133, 134]),
 ]
+
+PN_ENABLE_BLOCK_ID = 190
 
 PNS = {  # button to signal mapping
     600: 130, 601: 131,  # L, S
@@ -173,13 +175,24 @@ def on_railway_change(block) -> None:
     set_output(railway.outdir2, state['direction'] == 2)
 
 
+def pn_control_enabled() -> bool:
+    return utils.blocks.state(PN_ENABLE_BLOCK_ID)['activeOutput']
+
+
 def on_button_change(block) -> None:
-    if block['id'] not in PNS:
+    if block['id'] not in PNS or not pn_control_enabled():
         return
     btn_pressed = block['blockState']['activeInput']
     signalid = PNS[block['id']]
     logging.info(f'button for signal {signalid} : {btn_pressed}')
-    # TODO: de/activate PN for signal `signalid`
+
+    try:
+        if btn_pressed and utils.blocks.state(signalid)['signal'] == SC.STUJ:
+            pt_put(f'/blockState/{signalid}', {'blockState': {'signal': SC.PRIVOL}})
+        elif not btn_pressed and utils.blocks.state(signalid)['signal'] == SC.PRIVOL:
+            pt_put(f'/blockState/{signalid}', {'blockState': {'signal': SC.STUJ}})
+    except pt.PTHttpException as e:
+        logging.warning(f'Unable to de/activate PN for signal {signalid}!')
 
 
 def show_nav(id: int, aspect: int) -> None:
@@ -233,6 +246,7 @@ def on_connect():
 
     blocks.register_change(on_signal_change, *list(B_NAV.keys()))
     blocks.register_change(on_button_change, *list(PNS.keys()))
+    blocks.register_change(on_button_change, PN_ENABLE_BLOCK_ID)
 
     for railway in RAILWAYS.values():
         on_railway_change(pt.get(f'/blocks/{railway.block}?state=true')['block'])
