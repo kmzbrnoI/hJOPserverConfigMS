@@ -4,13 +4,13 @@ version=2.0
 [14]
 nazev=hektor
 majitel=MS
-oznaceni=721.114-7 MS
+oznaceni=721.214-5 MS
 poznamka=
 trida=1
 max_rychlost=45
 prechodnost=0
 pom_take=
 pom_release=
-func_vyznam={světla přední};{světla zadní};{dálkový světlomet};{posun};{vypnutí křivek};{světlo v kabině};{volnoběh};{houkačka dlouhá};{zvuk};{houkačka krátká};{houkačka střední};{píšťala dlouhá};{povolte brzdy úplně};;;;;;;;{broušení okolků};;;;;{plný výkon};;;{ztlumení zvuků};
+func_vyznam={světla přední};{světla zadní};{dálkový světlomet};{posun};{vypnutí křivek};{světlo v kabině};{volnoběh};;{zvuk};{houkačka krátká};{houkačka střední};{houkačka dlouhá};{povolte brzdy úplně};;;;;;;;{broušení okolků};;;;;{plný výkon};;;{ztlumení zvuků};
 func_type=PPPPPPPMPMMMMMPPPPPPPPPPPPPPP
 

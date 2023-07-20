@@ -1,0 +1,16 @@
+﻿[global]
+version=2.0
+
+[68]
+nazev=brejlovec
+majitel=MS
+oznaceni=753.168-4 MX
+poznamka=
+trida=1
+max_rychlost=45
+prechodnost=0
+pom_take=
+pom_release=
+func_vyznam={světla přední};;;{posun};{vypnutí křivek};{plný výkon};{volnoběh};{houkačka střední};{zvuk};{houkačka krátká};{houkačka dlouhá};;{povolte brzdy úplně};{píšťala dlouhá};{píšťala krátká};;;;;;{broušení okolků};;;;;;;;{ztlumení zvuků};
+func_type=PPPPPPPMPMMPMMMPPPPPPPPPPPPPP
+

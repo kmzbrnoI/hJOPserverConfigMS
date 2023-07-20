@@ -4,13 +4,13 @@ version=2.0
 [33]
 nazev=Brejlovec
 majitel=MS
-oznaceni=754 033-9 MX
+oznaceni=754 033-9 MS
 poznamka=
 trida=1
 max_rychlost=70
 prechodnost=0
 pom_take=
 pom_release=
-func_vyznam={světla koncová};{zvuk};{houkačka dlouhá};{povolte brzdy úplně};;;;{světla přední};{světla zadní};;;;;;;;;;;;{broušení okolků};;;;;;;;{ztlumení zvuků};
-func_type=PPMMMPPPPPPPPPPPPPPPPPPPPPPPP
+func_vyznam={světla přední};;;{posun};{vypnutí křivek};{plný výkon};{volnoběh};;{zvuk};{houkačka krátká};{houkačka dlouhá};;{povolte brzdy úplně};{píšťala dlouhá};{píšťala krátká};;;;;;{broušení okolků};;;;;{odkalovač};;;{ztlumení zvuků};
+func_type=PPPPPPPMPMMMMMMPMPMPPPPPPPPPP
 
